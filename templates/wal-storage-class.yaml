@@ -1,9 +1,9 @@
-#Amazon AWS Configuration
+{{- if (.Values.wal_pvc.enabled) }}
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
   name: {{ include "ignite.fullname" . }}-wal-storage-class
-provisioner: kubernetes.io/aws-ebs
+provisioner: {{ .Values.wal_pvc.provisioner }}
 parameters:
-  type: gp2
-  fsType: ext4
+{{ toYaml .Values.wal_pvc.provisioner_parameters | indent 2 }}
+{{- end }}

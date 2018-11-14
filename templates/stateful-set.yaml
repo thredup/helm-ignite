@@ -30,7 +30,6 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         resources:
 {{ toYaml .Values.resources | indent 10 }}
-    {{- with .Values.nodeSelector }}
         env:
         - name: OPTION_LIBS
           value: ignite-kubernetes,ignite-rest-http
@@ -51,12 +50,17 @@ spec:
         - containerPort: 8080 # REST port number.
         - containerPort: 10900 #Thin clients port number.
         volumeMounts:
+{{- if (.Values.wal_pvc.enabled) }}
         - mountPath: "/wal"
           name: ignite-wal
+{{- end }}
+{{- if (.Values.data_pvc.enabled) }}
         - mountPath: "/persistence"
           name: ignite-persistence
+{{- end }}
         - name: config-volume
           mountPath: /opt/ignite/apache-ignite-fabric/config
+{{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
     {{- end }}
@@ -69,6 +73,7 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
   volumeClaimTemplates:
+{{- if (.Values.data_pvc.enabled) }}
   - metadata:
       name: ignite-persistence
     spec:
@@ -76,7 +81,9 @@ spec:
       storageClassName: "{{ include "ignite.fullname" . }}-persistence-storage-class"
       resources:
         requests:
-          storage: "20Gi"
+          storage: {{ .Values.data_pvc.size }}
+{{- end }}
+{{- if (.Values.wal_pvc.enabled) }}
   - metadata:
       name: ignite-wal
     spec:
@@ -84,4 +91,5 @@ spec:
       storageClassName: "{{ include "ignite.fullname" . }}-wal-storage-class"
       resources:
         requests:
-          storage: "2Gi"
+          storage: {{ .Values.wal_pvc.size }}
+{{- end }}
