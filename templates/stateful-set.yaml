@@ -50,11 +50,11 @@ spec:
         - containerPort: 8080 # REST port number.
         - containerPort: 10900 #Thin clients port number.
         volumeMounts:
-{{- if (.Values.wal_pvc.enabled) }}
+{{- if (.Values.wal_persistence.enabled) }}
         - mountPath: "/wal"
           name: ignite-wal
 {{- end }}
-{{- if (.Values.data_pvc.enabled) }}
+{{- if (.Values.persistence.enabled) }}
         - mountPath: "/persistence"
           name: ignite-persistence
 {{- end }}
@@ -73,7 +73,7 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
   volumeClaimTemplates:
-{{- if (.Values.data_pvc.enabled) }}
+{{- if (.Values.persistence.enabled) }}
   - metadata:
       name: ignite-persistence
     spec:
@@ -81,9 +81,9 @@ spec:
       storageClassName: "{{ include "ignite.fullname" . }}-persistence-storage-class"
       resources:
         requests:
-          storage: {{ .Values.data_pvc.size }}
+          storage: {{ .Values.persistence.size }}
 {{- end }}
-{{- if (.Values.wal_pvc.enabled) }}
+{{- if (.Values.wal_persistence.enabled) }}
   - metadata:
       name: ignite-wal
     spec:
@@ -91,5 +91,5 @@ spec:
       storageClassName: "{{ include "ignite.fullname" . }}-wal-storage-class"
       resources:
         requests:
-          storage: {{ .Values.wal_pvc.size }}
+          storage: {{ .Values.wal_persistence.size }}
 {{- end }}

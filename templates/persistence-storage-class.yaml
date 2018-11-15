@@ -1,9 +1,9 @@
-{{- if (.Values.data_pvc.enabled) }}
+{{- if (.Values.persistence.enabled) }}
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
   name: {{ include "ignite.fullname" . }}-persistence-storage-class
-provisioner: {{ .Values.data_pvc.provisioner }}
+provisioner: {{ .Values.persistence.provisioner }}
 parameters:
-{{ toYaml .Values.data_pvc.provisioner_parameters | indent 2 }}
+{{ toYaml .Values.persistence.provisioner_parameters | indent 2 }}
 {{- end }}

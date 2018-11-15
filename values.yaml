@@ -1,7 +1,4 @@
 # Default values for ignite.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 replicaCount: 2
 
 image:
@@ -12,17 +9,17 @@ image:
 nameOverride: ""
 fullnameOverride: ""
 
-wal_pvc:
+persistence:
   enabled: false
-  size: 5Gi
+  size: 8Gi
   provisioner: kubernetes.io/aws-ebs
   provisioner_parameters:
     type: gp2
     fsType: ext4
 
-data_pvc:
+wal_persistence:
   enabled: false
-  size: 25Gi
+  size: 8Gi
   provisioner: kubernetes.io/aws-ebs
   provisioner_parameters:
     type: gp2
